@@ -34,9 +34,12 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
+import weka.core.OptionHandler;
 import weka.core.Range;
 import weka.core.RevisionUtils;
 import weka.core.Utils;
+import weka.core.stopwords.Null;
+import weka.core.stopwords.StopwordsHandler;
 import weka.core.tokenizers.Tokenizer;
 import weka.core.tokenizers.WhiteSpaceTokenizer;
 import weka.core.tokenizers.WordTokenizer;
@@ -49,12 +52,61 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 /**
  <!-- globalinfo-start -->
+ * Performs part-of-speech tagging using the Stanford parser and the user-specified model.
+ * <p/>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * Valid options are: <p/>
+ * 
+ * <pre> -R &lt;range&gt;
+ *  The attribute range to work on.
+ * This is a comma separated list of attribute indices, with "first" and "last" valid values.
+ *  Specify an inclusive range with "-".
+ *  E.g: "first-3,5,6-10,last".
+ *  (default: first-last)</pre>
+ * 
+ * <pre> -V
+ *  Inverts the attribute selection range.
+ *  (default: off)</pre>
+ * 
+ * <pre> -tokenizer &lt;spec&gt;
+ *  The tokenizing algorihtm (classname plus parameters) to use.
+ *  (default: weka.core.tokenizers.WordTokenizer)</pre>
+ * 
+ * <pre> -model &lt;file&gt;
+ *  The stanford model file to use.
+ *  (default: .</pre>
+ * 
+ * <pre> -additional &lt;options&gt;
+ *  The additional options for the parser.
+ *  (default: </pre>
+ * 
+ * <pre> -suppress-label-prefixes
+ *  Whether to suppress label prefixes (like VP or NP).
+ *  (default: off)</pre>
+ * 
+ * <pre> -regexp-labels &lt;expression&gt;
+ *  The regular expression for the labels (like NV or VP) to keep.
+ *  Words which labels don't match this expression get dropped.
+ *  (default: .*</pre>
+ * 
+ * <pre> -stopwords &lt;spec&gt;
+ *  The stopwords algorihtm (classname plus parameters) to use.
+ *  (default: weka.core.stopwords.Null)</pre>
+ * 
+ * <pre> -output-debug-info
+ *  If set, filter is run in debug mode and
+ *  may output additional info to the console</pre>
+ * 
+ * <pre> -do-not-check-capabilities
+ *  If set, filter capabilities are not checked before filter is built
+ *  (use with caution).</pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -77,11 +129,20 @@ public class PartOfSpeechTagging
   /** the model to use. */
   protected File m_Model = new File(".");
 
-  /** additional options, */
+  /** additional options for the parser. */
   protected String m_AdditionalOptions = "";
 
   /** the parser in use. */
   protected LexicalizedParser m_Parser = null;
+
+  /** whether to suppress the label prefixes */
+  protected boolean m_SuppressLabelPrefixes = false;
+
+  /** the regular expression for the labels to keep. */
+  protected String m_RegExpLabels = ".*";
+
+  /** the stopwords handler to apply after the parsing. */
+  protected StopwordsHandler m_Stopwords = new Null();
 
   /**
    * Returns a string describing this filter.
@@ -125,6 +186,19 @@ public class PartOfSpeechTagging
     result.addElement(new Option(
       "\tThe additional options for the parser.\n"
         + "\t(default: ", "additional", 1, "-additional <options>"));
+
+    result.addElement(new Option("\tWhether to suppress label prefixes (like VP or NP).\n"
+      + "\t(default: off)", "suppress-label-prefixes", 0, "-suppress-label-prefixes"));
+
+    result.addElement(new Option(
+      "\tThe regular expression for the labels (like NV or VP) to keep.\n"
+        + "\tWords which labels don't match this expression get dropped.\n"
+        + "\t(default: .*", "regexp-labels", 1, "-regexp-labels <expression>"));
+
+    result.addElement(new Option(
+      "\tThe stopwords algorihtm (classname plus parameters) to use.\n"
+        + "\t(default: " + Null.class.getName() + ")", "stopwords", 1,
+      "-stopwords <spec>"));
 
     result.addAll(Collections.list(super.listOptions()));
 
@@ -178,6 +252,30 @@ public class PartOfSpeechTagging
     else
       setAdditionalOptions("");
 
+    setSuppressLabelPrefixes(Utils.getFlag("suppress-label-prefixes", options));
+
+    tmpStr = Utils.getOption("regexp-labels", options);
+    if (tmpStr.length() != 0)
+      setRegExpLabels(tmpStr);
+    else
+      setRegExpLabels(".*");
+
+    tmpStr = Utils.getOption("stopwords", options);
+    if (tmpStr.length() == 0) {
+      setStopwords(new Null());
+    }
+    else {
+      classOptions = Utils.splitOptions(tmpStr);
+      if (classOptions.length == 0)
+	throw new Exception("Invalid stopwords specification string");
+      className = classOptions[0];
+      classOptions[0] = "";
+      StopwordsHandler stopwords = (StopwordsHandler) Class.forName(className).newInstance();
+      if (stopwords instanceof OptionHandler)
+        ((OptionHandler) stopwords).setOptions(classOptions);
+      setStopwords(stopwords);
+    }
+
     if (getInputFormat() != null)
       setInputFormat(getInputFormat());
 
@@ -202,15 +300,24 @@ public class PartOfSpeechTagging
       result.add("-V");
 
     result.add("-tokenizer");
-    result.add("" + Utils.toCommandLine(getTokenizer()));
+    result.add(Utils.toCommandLine(getTokenizer()));
 
     result.add("-model");
     result.add("" + getModel());
 
     if (!getAdditionalOptions().isEmpty()) {
       result.add("-additional");
-      result.add("" + getAdditionalOptions());
+      result.add(getAdditionalOptions());
     }
+
+    if (getSuppressLabelPrefixes())
+      result.add("-suppress-label-prefixes");
+
+    result.add("-regexp-labels");
+    result.add(getRegExpLabels());
+
+    result.add("-stopwords");
+    result.add(Utils.toCommandLine(getStopwords()));
 
     Collections.addAll(result, super.getOptions());
 
@@ -364,6 +471,94 @@ public class PartOfSpeechTagging
   }
 
   /**
+   * Sets whether to suppress the prefix labels.
+   *
+   * @param value if true then the prefix labels get suppressed
+   */
+  public void setSuppressLabelPrefixes(boolean value) {
+    m_SuppressLabelPrefixes = value;
+  }
+
+  /**
+   * Gets whether to suppress the prefix labels.
+   *
+   * @return true if the prefix labels get suppressed
+   */
+  public boolean getSuppressLabelPrefixes() {
+    return m_SuppressLabelPrefixes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return tip text for this property suitable for displaying in the
+   *         explorer/experimenter gui
+   */
+  public String suppressLabelPrefixesTipText() {
+    return "If set to true, the prefix labels (like 'NP' and 'VP') get suppressed.";
+  }
+
+  /**
+   * Sets the regular expression for the labels to keep.
+   *
+   * @param value the regular expression
+   */
+  public void setRegExpLabels(String value) {
+    if ((value == null) || (value.isEmpty()))
+      value = ".*";
+    m_RegExpLabels = value;
+  }
+
+  /**
+   * Gets the current regular expression for the labels to keep.
+   *
+   * @return the regular expression
+   */
+  public String getRegExpLabels() {
+    return m_RegExpLabels;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return tip text for this property suitable for displaying in the
+   *         explorer/experimenter gui
+   */
+  public String regExpLabelsTipText() {
+    return
+      "The regular expression that prefix labels must match in order for "
+        + "their associated words to make it into the output.";
+  }
+
+  /**
+   * the stopwords algorithm to use after parsing.
+   *
+   * @param value the configured stopwords algorithm
+   */
+  public void setStopwords(StopwordsHandler value) {
+    m_Stopwords = value;
+  }
+
+  /**
+   * Returns the current stopwords algorithm used after parsing.
+   *
+   * @return the current stopwords algorithm
+   */
+  public StopwordsHandler getStopwords() {
+    return m_Stopwords;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return tip text for this property suitable for displaying in the
+   *         explorer/experimenter gui
+   */
+  public String stopwordsTipText() {
+    return "The stopwrods algorithm to apply after the parsing.";
+  }
+
+  /**
    * Returns the Capabilities of this filter.
    *
    * @return the capabilities of this object
@@ -453,19 +648,32 @@ public class PartOfSpeechTagging
    *
    * @param parentTree	the tree to process
    * @param content	the string buffer to add the content to
+   * @param pattern     the pattern that the labels must match (null for match-all)
    */
-  protected void traverseTree(Tree parentTree, StringBuilder content) {
+  protected void traverseTree(Tree parentTree, StringBuilder content, Pattern pattern) {
     Tree	childTree;
     int		i;
+    String      word;
+    String      label;
 
     for (i = 0; i < parentTree.children().length; i++) {
       childTree = parentTree.children()[i];
       if (childTree.isLeaf()) {
+        label = parentTree.label().value();
+        word = childTree.label().value();
+        // stopword?
+        if (m_Stopwords.isStopword(word))
+          continue;
+        // keep label?
+        if ((pattern != null) && !pattern.matcher(word).matches())
+          continue;
 	if (content.length() > 0)
-	  content.append(", ");
-	content.append(parentTree.label().value() + ":" + childTree.label().value());
+	  content.append(" ");
+        if (!m_SuppressLabelPrefixes)
+          content.append(label + ":");
+        content.append(word);
       }
-      traverseTree(childTree, content);
+      traverseTree(childTree, content, pattern);
     }
   }
 
@@ -508,10 +716,14 @@ public class PartOfSpeechTagging
     List<String>	sentences;
     StringBuilder	tagged;
     String		newString;
+    Pattern		pattern;
 
     words = new ArrayList<String>();
     values = new double[instance.numAttributes()];
     current = instance.toDoubleArray();
+    pattern = null;
+    if (!m_RegExpLabels.equals(".*"))
+      pattern = Pattern.compile(m_RegExpLabels);
 
     for (i = 0; i < instance.numAttributes() - 1; i++) {
       if (!instance.attribute(i).isString() || !m_AttributeIndices.isInRange(i)) {
@@ -526,6 +738,7 @@ public class PartOfSpeechTagging
       sentences = getSentences(instance.stringValue(i));
       if (getDebug())
 	debug(sentences.size() + " sentence(s) [" + instance.stringValue(i).length() + "]: " + shorten(instance.stringValue(i), 40));
+      // process sentences
       tagged = new StringBuilder();
       for (String sentence: sentences) {
 	if (getDebug())
@@ -537,7 +750,7 @@ public class PartOfSpeechTagging
 	  words.add(m_Tokenizer.nextElement());
 	// generate parse tree
 	tree = m_Parser.apply(Sentence.toWordList(words.toArray(new String[words.size()])));
-	traverseTree(tree, tagged);
+	traverseTree(tree, tagged, pattern);
 	tagged.append(". ");
       }
       newString = tagged.toString().trim();
