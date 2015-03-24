@@ -178,6 +178,7 @@
          <include name="*.zip"/>
          <exclude name="weka.jar"/>
          <exclude name="weka-tests.jar"/>
+         <exclude name="*-models.jar"/>
        </fileset>
     </copy>
     <mkdir dir="${dist}/${package}/doc"/>
