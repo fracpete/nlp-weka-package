@@ -37,9 +37,32 @@ import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
+ * Changes the case to lower case (default) or upper case.
+ * <p/>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * Valid options are: <p/>
+ * 
+ * <pre> -R &lt;range&gt;
+ *  The attribute range to work on.
+ * This is a comma separated list of attribute indices, with "first" and "last" valid values.
+ *  Specify an inclusive range with "-".
+ *  E.g: "first-3,5,6-10,last".
+ *  (default: first-last)</pre>
+ * 
+ * <pre> -uppercase
+ *  Whether to convert to upper case.
+ *  (default: off)</pre>
+ * 
+ * <pre> -output-debug-info
+ *  If set, filter is run in debug mode and
+ *  may output additional info to the console</pre>
+ * 
+ * <pre> -do-not-check-capabilities
+ *  If set, filter capabilities are not checked before filter is built
+ *  (use with caution).</pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
