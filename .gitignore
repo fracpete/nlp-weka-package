@@ -8,6 +8,8 @@ release.properties
 build/
 dist/
 doc/
+models/
+lib/*-models.jar
 .classpath
 .project
 .settings/
