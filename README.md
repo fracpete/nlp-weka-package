@@ -11,6 +11,10 @@ Filters:
 
   Performs part-of-speech tagging.
 
+* `weka.filters.unsupervised.attribute.ChangeCase`
+
+  Changes strings to upper or lower case.
+
 Tokenizers:
 
 * `weka.core.tokenizers.PTBTokenizer`
