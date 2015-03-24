@@ -1,7 +1,8 @@
 nlp-weka-package
 ===================================
 
-Contains various natural language processing components.
+Contains various natural language processing components. Makes use of the
+[Stanford Parser](http://nlp.stanford.edu/software/).
 
 Filters:
 
@@ -37,7 +38,7 @@ Add the following dependency in your `pom.xml` to include the package:
     <dependency>
       <groupId>com.github.fracpete</groupId>
       <artifactId>nlp-weka-package</artifactId>
-      <version>2015.4.1</version>
+      <version>X.Y.Z</version>
       <type>jar</type>
       <exclusions>
         <exclusion>
