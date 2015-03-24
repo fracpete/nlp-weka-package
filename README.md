@@ -23,7 +23,7 @@ Tokenizers:
 
 * `weka.core.tokenizers.WhiteSpaceTokenizer`
 
-  simple tokenizers, uses String.split("\\s")
+  simple tokenizer, uses String.split("\\s")
 
 
 How to use packages
