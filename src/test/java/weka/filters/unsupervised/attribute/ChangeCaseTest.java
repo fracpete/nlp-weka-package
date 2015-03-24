@@ -25,6 +25,7 @@ import junit.textui.TestRunner;
 import weka.core.Instances;
 import weka.filters.AbstractFilterTest;
 import weka.filters.Filter;
+import weka.tests.TestHelper;
 
 /**
  * Tests ChangeCase. Run from the command line with:<p>
@@ -39,9 +40,14 @@ public class ChangeCaseTest extends AbstractFilterTest {
     super(name);
   }
 
+  /**
+   * Called by JUnit before each test method.
+   *
+   * @throws Exception if an error occurs
+   */
   @Override
   protected void setUp() throws Exception {
-    System.setProperty("weka.test.Regression.root", "src/test/resources");
+    TestHelper.setRegressionRoot();
     super.setUp();
   }
 
