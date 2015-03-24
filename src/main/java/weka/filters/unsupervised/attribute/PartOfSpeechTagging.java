@@ -665,7 +665,7 @@ public class PartOfSpeechTagging
         if (m_Stopwords.isStopword(word))
           continue;
         // keep label?
-        if ((pattern != null) && !pattern.matcher(word).matches())
+        if ((pattern != null) && !pattern.matcher(label).matches())
           continue;
 	if (content.length() > 0)
 	  content.append(" ");
