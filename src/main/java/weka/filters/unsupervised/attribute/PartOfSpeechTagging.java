@@ -101,7 +101,7 @@ public class PartOfSpeechTagging
    */
   @Override
   public Enumeration<Option> listOptions() {
-    Vector<Option> result = new Vector<Option>(6);
+    Vector<Option> result = new Vector<Option>();
 
     result.addElement(new Option("\tThe attribute range to work on.\n"
       + "This is a comma separated list of attribute indices, with "
@@ -516,6 +516,10 @@ public class PartOfSpeechTagging
     for (i = 0; i < instance.numAttributes() - 1; i++) {
       if (!instance.attribute(i).isString() || !m_AttributeIndices.isInRange(i)) {
 	values[i] = current[i];
+	continue;
+      }
+      if (instance.isMissing(i)) {
+	values[i] = Utils.missingValue();
 	continue;
       }
       // split into sentences
