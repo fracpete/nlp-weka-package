@@ -5,8 +5,19 @@ Contains various natural language processing components.
 
 Filters:
 
-* weka.filters.unsupervised.attribute.POSTagging
+* `weka.filters.unsupervised.attribute.PartOfSpeechTagging`
+
   Performs part-of-speech tagging.
+
+Tokenizers:
+
+* `weka.core.tokenizers.PTBTokenizer`
+
+  Penn Treebank tokenizer
+
+* `weka.core.tokenizers.WhiteSpaceTokenizer`
+
+  simple tokenizers, uses String.split("\\s")
 
 
 How to use packages
