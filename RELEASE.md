@@ -28,3 +28,5 @@ Maven
 
 * go to https://oss.sonatype.org/ and close/release the artifacts
 
+* do a `git push`
+
