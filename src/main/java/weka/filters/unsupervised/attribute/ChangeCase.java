@@ -38,11 +38,11 @@ import java.util.Vector;
 /**
  <!-- globalinfo-start -->
  * Changes the case to lower case (default) or upper case.
- * <p/>
+ * <p>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
+ * Valid options are: <p>
  * 
  * <pre> -R &lt;range&gt;
  *  The attribute range to work on.
