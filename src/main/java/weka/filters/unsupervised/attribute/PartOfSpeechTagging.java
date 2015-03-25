@@ -57,11 +57,11 @@ import java.util.regex.Pattern;
 /**
  <!-- globalinfo-start -->
  * Performs part-of-speech tagging using the Stanford parser and the user-specified model.
- * <p>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p>
+ * Valid options are: <br>
  * 
  * <pre> -R &lt;range&gt;
  *  The attribute range to work on.
