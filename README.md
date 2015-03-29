@@ -3,7 +3,15 @@ nlp-weka-package
 
 Contains various natural language processing components.
 
-Makes use of the [Stanford Parser](http://nlp.stanford.edu/software/). You can download parser models from [Maven Central](http://search.maven.org/remotecontent?filepath=edu/stanford/nlp/stanford-parser/3.4.1/stanford-parser-3.4.1-models.jar), unzip them (a .jar file is simply a ZIP file) and point to the correct parser model.
+Makes use of the [Stanford Parser](http://nlp.stanford.edu/software/). You can download parser models from [Maven Central](http://search.maven.org/remotecontent?filepath=edu/stanford/nlp/stanford-parser/3.4.1/stanford-parser-3.4.1-models.jar), unzip them (a .jar file is simply a ZIP file) and point to the correct parser model. A simple parser model is available from:
+
+* Linux
+
+  `$HOME/wekafiles/nlp/models`
+
+* Windows
+
+  `%USERPROFILE\\wekfiles\\nlp\\models%`
 
 Filters:
 
