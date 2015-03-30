@@ -1,7 +1,10 @@
 nlp-weka-package
-===================================
+================
 
 Contains various natural language processing components.
+
+Parsers
+-------
 
 Makes use of the [Stanford Parser](http://nlp.stanford.edu/software/). You can download parser models from [Maven Central](http://search.maven.org/remotecontent?filepath=edu/stanford/nlp/stanford-parser/3.4.1/stanford-parser-3.4.1-models.jar), unzip them (a .jar file is simply a ZIP file) and point to the correct parser model. A simple parser model is available from:
 
@@ -11,9 +14,10 @@ Makes use of the [Stanford Parser](http://nlp.stanford.edu/software/). You can d
 
 * Windows
 
-  `%USERPROFILE\\wekfiles\\nlp\\models%`
+  `%USERPROFILE%\\wekfiles\\nlp\\models`
 
-Filters:
+Filters
+-------
 
 * `weka.filters.unsupervised.attribute.PartOfSpeechTagging`
 
@@ -23,7 +27,8 @@ Filters:
 
   Changes strings to upper or lower case.
 
-Tokenizers:
+Tokenizers
+----------
 
 * `weka.core.tokenizers.PTBTokenizer`
 
@@ -32,6 +37,16 @@ Tokenizers:
 * `weka.core.tokenizers.WhiteSpaceTokenizer`
 
   simple tokenizer, uses String.split("\\s")
+
+Explorer
+--------
+
+You can test parsers (and associated options) with the Explorer tab *NLP Parse trees*.
+You simply select a `STRING` attribute from the currently loaded dataset that you
+want to analyze and then you can select a row from the dataset to parse.
+Once you have selected a parser model (and maybe added some custom options),
+you can parse the string/document. For each sentence in the string/document,
+a separate parse tree will get generated and displayed.
 
 
 How to use packages
