@@ -171,6 +171,15 @@
     </delete>
     <copy file="Description.props"
           todir="${dist}/${package}"/>
+    <copy file="Explorer.props"
+          todir="${dist}/${package}"/>
+    <mkdir dir="${dist}/${package}/models"/>
+    <copy todir="${dist}/${package}/models" >
+       <fileset dir="models">
+         <include name="*.ser.gz"/>
+         <include name="*.ser"/>
+       </fileset>
+    </copy>
     <mkdir dir="${dist}/${package}/lib"/>
     <copy todir="${dist}/${package}/lib" >
        <fileset dir="${lib}">
