@@ -774,7 +774,7 @@ public class PartOfSpeechTagging
    *
    * @return		the factory
    */
-  protected static synchronized TokenizerFactory getTokenizerFactory() {
+  public static synchronized TokenizerFactory getTokenizerFactory() {
     if (m_TokenizerFactory == null) {
       m_TokenizerFactory = PTBTokenizer.factory(
 	new CoreLabelTokenFactory(),
