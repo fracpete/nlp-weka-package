@@ -49,6 +49,13 @@ you can parse the string/document. For each sentence in the string/document,
 a separate parse tree will get generated and displayed.
 
 
+Releases
+--------
+
+* [2015.3.30](https://github.com/fracpete/nlp-weka-package/releases/download/v2015.3.30/nlp-2015.3.30.zip)
+* [2015.3.25](https://github.com/fracpete/nlp-weka-package/releases/download/v2015.3.25/nlp-2015.3.25.zip)
+
+
 How to use packages
 -------------------
 
