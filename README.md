@@ -52,6 +52,7 @@ a separate parse tree will get generated and displayed.
 Releases
 --------
 
+* [2019.3.29](https://github.com/fracpete/nlp-weka-package/releases/download/v2019.3.29/nlp-2019.3.29.zip)
 * [2015.3.30](https://github.com/fracpete/nlp-weka-package/releases/download/v2015.3.30/nlp-2015.3.30.zip)
 * [2015.3.25](https://github.com/fracpete/nlp-weka-package/releases/download/v2015.3.25/nlp-2015.3.25.zip)
 
@@ -73,7 +74,7 @@ Add the following dependency in your `pom.xml` to include the package:
     <dependency>
       <groupId>com.github.fracpete</groupId>
       <artifactId>nlp-weka-package</artifactId>
-      <version>2015.3.30</version>
+      <version>2019.3.29</version>
       <type>jar</type>
       <exclusions>
         <exclusion>
