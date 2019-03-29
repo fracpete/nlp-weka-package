@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PartOfSpeechTagging.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package weka.filters.unsupervised.attribute;
@@ -110,7 +110,6 @@ import java.util.regex.Pattern;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PartOfSpeechTagging
   extends SimpleStreamFilter {
@@ -725,8 +724,8 @@ public class PartOfSpeechTagging
     if (!m_RegExpLabels.equals(".*"))
       pattern = Pattern.compile(m_RegExpLabels);
 
-    for (i = 0; i < instance.numAttributes() - 1; i++) {
-      if (!instance.attribute(i).isString() || !m_AttributeIndices.isInRange(i)) {
+    for (i = 0; i < instance.numAttributes(); i++) {
+      if (!instance.attribute(i).isString() || !m_AttributeIndices.isInRange(i) || (i == instance.classIndex())) {
 	values[i] = current[i];
 	continue;
       }
