@@ -5,10 +5,10 @@
 PackageName=nlp
 
 # Version (required)
-Version=2015.3.30
+Version=2019.3.29
 
 #Date (year-month-day)
-Date=2015-03-30
+Date=2019-03-29
 
 # Title (required)
 Title=Natural Language Processing
@@ -29,7 +29,7 @@ License=GPL 3.0
 Description=Contains various natural language processing components.
 
 # Package URL for obtaining the package archive (required)
-PackageURL=https://github.com/fracpete/nlp-weka-package/releases/download/v2015.3.30/nlp-2015.3.30.zip
+PackageURL=https://github.com/fracpete/nlp-weka-package/releases/download/v2019.3.29/nlp-2019.3.29.zip
 
 # URL for further information
 URL=https://github.com/fracpete/nlp-weka-package
